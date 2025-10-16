@@ -1,0 +1,1312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, #1f1f2e 0%, #16213e 100%);
+            color: white;
+            padding: 30px 20px;
+            height: 100vh;
+            overflow-y: auto;
+            box-shadow: 2px 0 15px rgba(0, 0, 0, 0.3);
+            position: fixed;
+            left: 0;
+            top: 0;
+        }
+
+        .sidebar h1 {
+            font-size: 24px;
+            margin-bottom: 40px;
+            text-align: center;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+        }
+
+        .nav-section {
+            margin-bottom: 35px;
+        }
+
+        .nav-title {
+            font-size: 13px;
+            text-transform: uppercase;
+            color: #888;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .nav-btn {
+            display: block;
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(102, 126, 234, 0.1);
+            color: #e0e0e0;
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            font-weight: 500;
+            text-align: left;
+        }
+
+        .nav-btn:hover, .nav-btn.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-color: #667eea;
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .main-content {
+            margin-left: 280px;
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+        }
+
+        .header {
+            background: white;
+            padding: 25px 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h2 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            color: #888;
+            font-size: 14px;
+        }
+
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .topic-container {
+            margin-bottom: 30px;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .topic-header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 18px 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .topic-header:hover {
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .toggle-icon {
+            font-size: 18px;
+            transition: transform 0.3s ease;
+        }
+
+        .topic-header.collapsed .toggle-icon {
+            transform: rotate(-90deg);
+        }
+
+        .problems-list {
+            padding: 20px 25px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .problems-list.hidden {
+            display: none;
+        }
+
+        .problem-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            transition: all 0.3s ease;
+        }
+
+        .problem-item:hover {
+            background: #e8eaf6;
+            transform: translateX(5px);
+        }
+
+        .problem-info {
+            flex: 1;
+        }
+
+        .problem-name {
+            color: #333;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .problem-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .leetcode-link {
+            background: linear-gradient(135deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .leetcode-link:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(240, 148, 51, 0.4);
+        }
+
+        .checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #667eea;
+        }
+
+        .algorithm-item {
+            padding: 12px 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 4px solid #667eea;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .cs-subject {
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .cs-subject h4 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .link-input-group {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .link-input-group input {
+            flex: 1;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 13px;
+            transition: all 0.3s ease;
+        }
+
+        .link-input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .link-input-group button {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .link-input-group button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .links-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .link-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border-left: 4px solid #667eea;
+            transition: all 0.3s ease;
+        }
+
+        .link-item:hover {
+            background: #e8eaf6;
+        }
+
+        .link-item a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            word-break: break-all;
+        }
+
+        .link-item a:hover {
+            text-decoration: underline;
+        }
+
+        .delete-btn {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .delete-btn:hover {
+            background: #ff5252;
+            transform: scale(1.05);
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #764ba2, #667eea);
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 200px;
+            }
+
+            .main-content {
+                margin-left: 200px;
+                padding: 20px;
+            }
+
+            .header h2 {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h1>📚 StudyHub</h1>
+        
+        <div class="nav-section">
+            <div class="nav-title">Content</div>
+            <button class="nav-btn active" onclick="switchSection('leetcode', this)">💻 LeetCode</button>
+            <button class="nav-btn" onclick="switchSection('algorithms', this)">🔧 Algorithms</button>
+            <button class="nav-btn" onclick="switchSection('cssubjects', this)">📖 CS Subjects</button>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <!-- LeetCode Section -->
+        <div class="content-section active" id="leetcode">
+            <div class="header">
+                <h2>LeetCode Problems</h2>
+                <p>Master DSA topics with organized problem sets</p>
+            </div>
+
+            <div class="topic-container">
+                <div class="topic-header" onclick="toggleTopic(this)">
+                    <span>Arrays and Hashing</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="problems-list">
+                    <div class="problem-item">
+                        <div class="problem-info">
+                            <div class="problem-name">Two Sum</div>
+                        </div>
+                        <div class="problem-actions">
+                            <a href="https://leetcode.com/problems/two-sum/" target="_blank" class="leetcode-link">Open</a>
+                            <input type="checkbox" class="checkbox">
+                        </div>
+                    </div>
+                    <div class="problem-item">
+                        <div class="problem-info">
+                            <div class="problem-name">Group Anagrams</div>
+                        </div>
+                        <div class="problem-actions">
+                            <a href="https://leetcode.com/problems/group-anagrams/" target="_blank" class="leetcode-link">Open</a>
+                            <input type="checkbox" class="checkbox">
+                        </div>
+                    </div>
+                    <div class="problem-item">
+                        <div class="problem-info">
+                            <div class="problem-name">Top K Frequent Elements</div>
+                        </div>
+                        <div class="problem-actions">
+                            <a href="https://leetcode.com/problems/top-k-frequent-elements/" target="_blank" class="leetcode-link">Open</a>
+                            <input type="checkbox" class="checkbox">
+                        </div>
+                    </div>
+                    <div class="problem-item">
+                        <div class="problem-info">
+                            <div class="problem-name">Product of Array Except Self</div>
+                        </div>
+                        <div class="problem-actions">
+                            <a href="https://leetcode.com/problems/product-of-array-except-self/" target="_blank" class="leetcode-link">Open</a>
+                            <input type="checkbox" class="checkbox">
+                        </div>
+                    </div>
+                    <div class="problem-item">
+                        <div class="problem-info">
+                            <div class="problem-name">Longest Consecutive Sequence</div>
+                        </div>
+                        <div class="problem-actions">
+                            <a href="https://leetcode.com/problems/longest-consecutive/" target="_blank" class="leetcode-link">Open</a>
+                            <input type="checkbox" class="checkbox">
+                        </div>
+                    </div>
+                    <div class="problem-item">
+                        <div class="problem-info">
+                            <div class="problem-name">Encode and Decode Strings</div>
+                        </div>
+                        <div class="problem-actions">
+                            <a href="https://leetcode.com/problems/encode-and-decode-strings/" target="_blank" class="leetcode-link">Open</a>
+                            <input type="checkbox" class="checkbox">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="topic-container">
+                <div class="topic-header" onclick="toggleTopic(this)">
+                    <span>Two Pointers</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="problems-list">
+                    <div class="problem-item">
+                        <div class="problem-info">
+                            <div class="problem-name">Valid Palindrome</div>
+                        </div>
+                        <div class="problem-actions">
+                            <a href="https://leetcode.com/problems/valid-palindrome/" target="_blank" class="leetcode-link">Open</a>
+                            <input type="checkbox" class="checkbox">
+                        </div>
+                    </div>
+                    <div class="problem-item">
+                        <div class="problem-info">
+                            <div class="problem-name">Two Sum II</div>
+                        </div>
+                        <div class="problem-actions">
+                            <a href="https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/" target="_blank" class="leetcode-link">Open</a>
+                            <input type="checkbox" class="checkbox">
+                        </div>
+                    </div>
+                    <div class="problem-item">
+                        <div class="problem-info">
+                            <div class="problem-name">3Sum</div>
+                        </div>
+                        <div class="problem-actions">
+                            <a href="https://leetcode.com/problems/3sum/" target="_blank" class="leetcode-link">Open</a>
+                            <input type="checkbox" class="checkbox">
+                        </div>
+                    </div>
+                    <div class="problem-item">
+                        <div class="problem-info">
+                            <div class="problem-name">Container with Most Water</div>
+                        </div>
+                        <div class="problem-actions">
+                            <a href="https://leetcode.com/problems/container-with-most-water/" target="_blank" class="leetcode-link">Open</a>
+                            <input type="checkbox" class="checkbox">
+                        </div>
+                    </div>
+                    <div class="problem-item">
+                        <div class="problem-info">
+                            <div class="problem-name">Trapping Rain Water</div>
+                        </div>
+                        <div class="problem-actions">
+                            <a href="https://leetcode.com/problems/trapping-rain-water/" target="_blank" class="leetcode-link">Open</a>
+                            <input type="checkbox" class="checkbox">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="topic-container">
+                <div class="topic-header" onclick="toggleTopic(this)">
+                    <span>Sliding Window</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="problems-list">
+                    <div class="problem-item">
+                        <div class="problem-info">
+                            <div class="problem-name">Best Time to Buy and Sell Stock</div>
+                        </div>
+                        <div class="problem-actions">
+                            <a href="https://leetcode.com/problems/best-time-to-buy-and-sell-stock/" target="_blank" class="leetcode-link">Open</a>
+                            <input type="checkbox" class="checkbox">
+                        </div>
+                    </div>
+                    <div class="problem-item">
+                        <div class="problem-info">
+                            <div class="problem-name">Longest Substring Without Repeating Characters</div>
+                        </div>
+                        <div class="problem-actions">
+                            <a href="https://leetcode.com/problems/longest-substring-without-repeating-characters/" target="_blank" class="leetcode-link">Open</a>
+                            <input type="checkbox" class="checkbox">
+                        </div>
+                    </div>
+                    <div class="problem-item">
+                        <div class="problem-info">
+                            <div class="problem-name">Longest Repeating Character Replacement</div>
+                        </div>
+                        <div class="problem-actions">
+                            <a href="https://leetcode.com/problems/longest-repeating-character-replacement/" target="_blank" class="leetcode-link">Open</a>
+                            <input type="checkbox" class="checkbox">
+                        </div>
+                    </div>
+                    <div class="problem-item">
+                        <div class="problem-info">
+                            <div class="problem-name">Permutation in String</div>
+                        </div>
+                        <div class="problem-actions">
+                            <a href="https://leetcode.com/problems/permutation-in-string/" target="_blank" class="leetcode-link">Open</a>
+                            <input type="checkbox" class="checkbox">
+                        </div>
+                    </div>
+                    <div class="problem-item">
+                        <div class="problem-info">
+                            <div class="problem-name">Minimum Window Substring</div>
+                        </div>
+                        <div class="problem-actions">
+                            <a href="https://leetcode.com/problems/minimum-window-substring/" target="_blank" class="leetcode-link">Open</a>
+                            <input type="checkbox" class="checkbox">
+                        </div>
+                    </div>
+                    <div class="problem-item">
+                        <div class="problem-info">
+                            <div class="problem-name">Sliding Window Maximum</div>
+                        </div>
+                        <div class="problem-actions">
+                            <a href="https://leetcode.com/problems/sliding-window-maximum/" target="_blank" class="leetcode-link">Open</a>
+                            <input type="checkbox" class="checkbox">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="topic-container">
+                <div class="topic-header" onclick="toggleTopic(this)">
+                    <span>Stack and Monotonic Patterns</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="problems-list">
+                    <div class="problem-item">
+                        <div class="problem-info">
+                            <div class="problem-name">Valid Parentheses</div>
+                        </div>
+                        <div class="problem-actions">
+                            <a href="https://leetcode.com/problems/valid-parentheses/" target="_blank" class="leetcode-link">Open</a>
+                            <input type="checkbox" class="checkbox">
+                        </div>
+                    </div>
+                    <div class="problem-item">
+                        <div class="problem-info">
+                            <div class="problem-name">Min Stack</div>
+                        </div>
+                        <div class="problem-actions">
+                            <a href="https://leetcode.com/problems/min-stack/" target="_blank" class="leetcode-link">Open</a>
+                            <input type="checkbox" class="checkbox">
+                        </div>
+                    </div>
+                    <div class="problem-item">
+                        <div class="problem-info">
+                            <div class="problem-name">Daily Temperatures</div>
+                        </div>
+                        <div class="problem-actions">
+                            <a href="https://leetcode.com/problems/daily-temperatures/" target="_blank" class="leetcode-link">Open</a>
+                            <input type="checkbox" class="checkbox">
+                        </div>
+                    </div>
+                    <div class="problem-item">
+                        <div class="problem-info">
+                            <div class="problem-name">Generate Parenthesis</div>
+                        </div>
+                        <div class="problem-actions">
+                            <a href="https://leetcode.com/problems/generate-parentheses/" target="_blank" class="leetcode-link">Open</a>
+                            <input type="checkbox" class="checkbox">
+                        </div>
+                    </div>
+                    <div class="problem-item">
+                        <div class="problem-info">
+                            <div class="problem-name">Car Fleet</div>
+                        </div>
+                        <div class="problem-actions">
+                            <a href="https://leetcode.com/problems/car-fleet/" target="_blank" class="leetcode-link">Open</a>
+                            <input type="checkbox" class="checkbox">
+                        </div>
+                    </div>
+                    <div class="problem-item">
+                        <div class="problem-info">
+                            <div class="problem-name">Largest Rectangle in Histogram</div>
+                        </div>
+                        <div class="problem-actions">
+                            <a href="https://leetcode.com/problems/largest-rectangle-in-histogram/" target="_blank" class="leetcode-link">Open</a>
+                            <input type="checkbox" class="checkbox">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="topic-container">
+                <div class="topic-header" onclick="toggleTopic(this)">
+                    <span>Binary Search</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="problems-list">
+                    <div class="problem-item">
+                        <div class="problem-info">
+                            <div class="problem-name">Binary Search</div>
+                        </div>
+                        <div class="problem-actions">
+                            <a href="https://leetcode.com/problems/binary-search/" target="_blank" class="leetcode-link">Open</a>
+                            <input type="checkbox" class="checkbox">
+                        </div>
+                    </div>
+                    <div class="problem-item">
+                        <div class="problem-info">
+                            <div class="problem-name">Search a 2D Matrix</div>
+                        </div>
+                        <div class="problem-actions">
+                            <a href="https://leetcode.com/problems/search-a-2d-matrix/" target="_blank" class="leetcode-link">Open</a>
+                            <input type="checkbox" class="checkbox">
+                        </div>
+                    </div>
+                    <div class="problem-item">
+                        <div class="problem-info">
+                            <div class="problem-name">Find Min in Rotated Sorted Array</div>
+                        </div>
+                        <div class="problem-actions">
+                            <a href="https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/" target="_blank" class="leetcode-link">Open</a>
+                            <input type="checkbox" class="checkbox">
+                        </div>
+                    </div>
+                    <div class="problem-item">
+                        <div class="problem-info">
+                            <div class="problem-name">Search in Rotated Sorted Array</div>
+                        </div>
+                        <div class="problem-actions">
+                            <a href="https://leetcode.com/problems/search-in-rotated-sorted-array/" target="_blank" class="leetcode-link">Open</a>
+                            <input type="checkbox" class="checkbox">
+                        </div>
+                    </div>
+                    <div class="problem-item">
+                        <div class="problem-info">
+                            <div class="problem-name">Koko Eating Bananas</div>
+                        </div>
+                        <div class="problem-actions">
+                            <a href="https://leetcode.com/problems/koko-eating-bananas/" target="_blank" class="leetcode-link">Open</a>
+                            <input type="checkbox" class="checkbox">
+                        </div>
+                    </div>
+                    <div class="problem-item">
+                        <div class="problem-info">
+                            <div class="problem-name">Median of 2 Sorted Arrays</div>
+                        </div>
+                        <div class="problem-actions">
+                            <a href="https://leetcode.com/problems/median-of-two-sorted-arrays/" target="_blank" class="leetcode-link">Open</a>
+                            <input type="checkbox" class="checkbox">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="topic-container">
+                <div class="topic-header" onclick="toggleTopic(this)">
+                    <span>Linked List Patterns</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="problems-list">
+                    <div class="problem-item">
+                        <div class="problem-info">
+                            <div class="problem-name">Reverse Linked List</div>
+                        </div>
+                        <div class="problem-actions">
+                            <a href="https://leetcode.com/problems/reverse-linked-list/" target="_blank" class="leetcode-link">Open</a>
+                            <input type="checkbox" class="checkbox">
+                        </div>
+                    </div>
+                    <div class="problem-item">
+                        <div class="problem-info">
+                            <div class="problem-name">Merge Two Sorted Lists</div>
+                        </div>
+                        <div class="problem-actions">
+                            <a href="https://leetcode.com/problems/merge-two-sorted-lists/" target="_blank" class="leetcode-link">Open</a>
+                            <input type="checkbox" class="checkbox">
+                        </div>
+                    </div>
+                    <div class="problem-item">
+                        <div class="problem-info">
+                            <div class="problem-name">Add Two Numbers</div>
+                        </div>
+                        <div class="problem-actions">
+                            <a href="https://leetcode.com/problems/add-two-numbers/" target="_blank" class="leetcode-link">Open</a>
+                            <input type="checkbox" class="checkbox">
+                        </div>
+                    </div>
+                    <div class="problem-item">
+                        <div class="problem-info">
+                            <div class="problem-name">LRU Cache</div>
+                        </div>
+                        <div class="problem-actions">
+                            <a href="https://leetcode.com/problems/lru-cache/" target="_blank" class="leetcode-link">Open</a>
+                            <input type="checkbox" class="checkbox">
+                        </div>
+                    </div>
+                    <div class="problem-item">
+                        <div class="problem-info">
+                            <div class="problem-name">Merge K Sorted Lists</div>
+                        </div>
+                        <div class="problem-actions">
+                            <a href="https://leetcode.com/problems/merge-k-sorted-lists/" target="_blank" class="leetcode-link">Open</a>
+                            <input type="checkbox" class="checkbox">
+                        </div>
+                    </div>
+                    <div class="problem-item">
+                        <div class="problem-info">
+                            <div class="problem-name">Reverse Nodes in K-Group</div>
+                        </div>
+                        <div class="problem-actions">
+                            <a href="https://leetcode.com/problems/reverse-nodes-in-k-group/" target="_blank" class="leetcode-link">Open</a>
+                            <input type="checkbox" class="checkbox">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="topic-container">
+                <div class="topic-header" onclick="toggleTopic(this)">
+                    <span>Trees and BSTs</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="problems-list">
+                    <div class="problem-item">
+                        <div class="problem-info">
+                            <div class="problem-name">Maximum Depth of Binary Tree</div>
+                        </div>
+                        <div class="problem-actions">
+                            <a href="https://leetcode.com/problems/maximum-depth-of-binary-tree/" target="_blank" class="leetcode-link">Open</a>
+                            <input type="checkbox" class="checkbox">
+                        </div>
+                    </div>
+                    <div class="problem-item">
+                        <div class="problem-info">
+                            <div class="problem-name">Binary Level Order Traversal</div>
+                        </div>
+                        <div class="problem-actions">
+                            <a href="https://leetcode.com/problems/binary-tree-level-order-traversal/" target="_blank" class="leetcode-link">Open</a>
+                            <input type="checkbox" class="checkbox">
+                        </div>
+                    </div>
+                    <div class="problem-item">
+                        <div class="problem-info">
+                            <div class="problem-name">Validate Binary Search Tree</div>
+                        </div>
+                        <div class="problem-actions">
+                            <a href="https://leetcode.com/problems/validate-binary-search-tree/" target="_blank" class="leetcode-link">Open</a>
+                            <input type="checkbox" class="checkbox">
+                        </div>
+                    </div>
+                    <div class="problem-item">
+                        <div class="problem-info">
+                            <div class="problem-name">Lowest Common Ancestor of a BST</div>
+                        </div>
+                        <div class="problem-actions">
+                            <a href="https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-search-tree/" target="_blank" class="leetcode-link">Open</a>
+                            <input type="checkbox" class="checkbox">
+                        </div>
+                    </div>
+                    <div class="problem-item">
+                        <div class="problem-info">
+                            <div class="problem-name">Binary Tree Maximum Path Sum</div>
+                        </div>
+                        <div class="problem-actions">
+                            <a href="https://leetcode.com/problems/binary-tree-maximum-path-sum/" target="_blank" class="leetcode-link">Open</a>
+                            <input type="checkbox" class="checkbox">
+                        </div>
+                    </div>
+                    <div class="problem-item">
+                        <div class="problem-info">
+                            <div class="problem-name">Serialize and Deserialize Binary Tree</div>
+                        </div>
+                        <div class="problem-actions">
+                            <a href="https://leetcode.com/problems/serialize-and-deserialize-binary-tree/" target="_blank" class="leetcode-link">Open</a>
+                            <input type="checkbox" class="checkbox">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="topic-container">
+                <div class="topic-header" onclick="toggleTopic(this)">
+                    <span>Heaps and Design Patterns</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="problems-list">
+                    <div class="problem-item">
+                        <div class="problem-info">
+                            <div class="problem-name">Kth Largest in a Stream</div>
+                        </div>
+                        <div class="problem-actions">
+                            <a href="https://leetcode.com/problems/kth-largest-element-in-a-stream/" target="_blank" class="leetcode-link">Open</a>
+                            <input type="checkbox" class="checkbox">
+                        </div>
+                    </div>
+                    <div class="problem-item">
+                        <div class="problem-info">
+                            <div class="problem-name">K Closest Points to Origin</div>
+                        </div>
+                        <div class="problem-actions">
+                            <a href="https://leetcode.com/problems/k-closest-points-to-origin/" target="_blank" class="leetcode-link">Open</a>
+                            <input type="checkbox" class="checkbox">
+                        </div>
+                    </div>
+                    <div class="problem-item">
+                        <div class="problem-info">
+                            <div class="problem-name">Kth Largest Element in an Array</div>
+                        </div>
+                        <div class="problem-actions">
+                            <a href="https://leetcode.com/problems/kth-largest-element-in-an-array/" target="_blank" class="leetcode-link">Open</a>
+                            <input type="checkbox" class="checkbox">
+                        </div>
+                    </div>
+                    <div class="problem-item">
+                        <div class="problem-info">
+                            <div class="problem-name">Task Scheduler</div>
+                        </div>
+                        <div class="problem-actions">
+                            <a href="https://leetcode.com/problems/task-scheduler/" target="_blank" class="leetcode-link">Open</a>
+                            <input type="checkbox" class="checkbox">
+                        </div>
+                    </div>
+                    <div class="problem-item">
+                        <div class="problem-info">
+                            <div class="problem-name">Design Twitter</div>
+                        </div>
+                        <div class="problem-actions">
+                            <a href="https://leetcode.com/problems/design-twitter/" target="_blank" class="leetcode-link">Open</a>
+                            <input type="checkbox" class="checkbox">
+                        </div>
+                    </div>
+                    <div class="problem-item">
+                        <div class="problem-info">
+                            <div class="problem-name">Find Median from Data Stream</div>
+                        </div>
+                        <div class="problem-actions">
+                            <a href="https://leetcode.com/problems/find-median-from-data-stream/" target="_blank" class="leetcode-link">Open</a>
+                            <input type="checkbox" class="checkbox">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Algorithms Section -->
+        <div class="content-section" id="algorithms">
+            <div class="header">
+                <h2>Algorithms & Patterns</h2>
+                <p>Master important algorithm patterns and techniques</p>
+            </div>
+
+            <div class="topic-container">
+                <div class="topic-header" onclick="toggleTopic(this)">
+                    <span>Strings & Its Patterns</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="problems-list">
+                    <div class="algorithm-item">KMP Algorithm</div>
+                    <div class="algorithm-item">Z-Algorithm</div>
+                    <div class="algorithm-item">Rabin-Karp Algorithm</div>
+                    <div class="algorithm-item">Longest Common Subsequence (LCS)</div>
+                    <div class="algorithm-item">Edit Distance</div>
+                    <div class="algorithm-item">Regular Expression Matching</div>
+                    <div class="algorithm-item">Palindrome Problems</div>
+                </div>
+            </div>
+
+            <div class="topic-container">
+                <div class="topic-header" onclick="toggleTopic(this)">
+                    <span>Dynamic Programming (DP) & Its Patterns</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="problems-list">
+                    <div class="algorithm-item">Fibonacci/Simple Recurrence</div>
+                    <div class="algorithm-item">0/1 Knapsack</div>
+                    <div class="algorithm-item">Unbounded Knapsack</div>
+                    <div class="algorithm-item">Longest Common Subsequence (LCS)</div>
+                    <div class="algorithm-item">Longest Increasing Subsequence (LIS)</div>
+                    <div class="algorithm-item">Grid-Based DP</div>
+                    <div class="algorithm-item">Interval DP</div>
+                    <div class="algorithm-item">Tree DP</div>
+                    <div class="algorithm-item">Bitmasking/State Compression</div>
+                    <div class="algorithm-item">Digit DP</div>
+                    <div class="algorithm-item">Probability/Expectation DP</div>
+                </div>
+            </div>
+
+            <div class="topic-container">
+                <div class="topic-header" onclick="toggleTopic(this)">
+                    <span>Graphs & Its Patterns</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="problems-list">
+                    <div class="algorithm-item">DFS/BFS Traversal</div>
+                    <div class="algorithm-item">Shortest Path Algorithms (Dijkstra, Bellman-Ford, Floyd-Warshall)</div>
+                    <div class="algorithm-item">Topological Sort</div>
+                    <div class="algorithm-item">Cycle Detection</div>
+                    <div class="algorithm-item">Connected Components</div>
+                    <div class="algorithm-item">Minimum Spanning Tree (MST)</div>
+                    <div class="algorithm-item">Union-Find (Disjoint Set Union - DSU)</div>
+                    <div class="algorithm-item">Grid-Based Graph Problems</div>
+                    <div class="algorithm-item">Graph Coloring</div>
+                    <div class="algorithm-item">Strongly Connected Components (SCC)</div>
+                    <div class="algorithm-item">Eulerian & Hamiltonian Paths</div>
+                    <div class="algorithm-item">Planets & Queries (Advanced Graph Problems)</div>
+                </div>
+            </div>
+
+            <div class="topic-container">
+                <div class="topic-header" onclick="toggleTopic(this)">
+                    <span>Trees & Its Patterns</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="problems-list">
+                    <div class="algorithm-item">Distance Between Nodes (LCA, BFS/DFS)</div>
+                    <div class="algorithm-item">Sum of Distances (Rerooting Technique)</div>
+                    <div class="algorithm-item">Subtree Queries (Segment Trees, Heavy-Light Decomposition)</div>
+                    <div class="algorithm-item">Binary Lifting (LCA Optimization)</div>
+                    <div class="algorithm-item">Tree DP (Dynamic Programming on Trees)</div>
+                    <div class="algorithm-item">Path Queries (Prefix Sums, Binary Lifting)</div>
+                    <div class="algorithm-item">Tree Construction (BST, Trie, etc.)</div>
+                </div>
+            </div>
+
+            <div class="topic-container">
+                <div class="topic-header" onclick="toggleTopic(this)">
+                    <span>Heap (Priority Queue) & Its Patterns</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="problems-list">
+                    <div class="algorithm-item">Top K Elements</div>
+                    <div class="algorithm-item">Merge K Sorted Structures</div>
+                    <div class="algorithm-item">Two Heaps for Medians</div>
+                    <div class="algorithm-item">Sliding Window Heaps</div>
+                    <div class="algorithm-item">Greedy Heap Applications</div>
+                    <div class="algorithm-item">Heap-based Game Theory</div>
+                </div>
+            </div>
+
+            <div class="topic-container">
+                <div class="topic-header" onclick="toggleTopic(this)">
+                    <span>Linked Lists & Its Patterns</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="problems-list">
+                    <div class="algorithm-item">Fast and Slow Pointers (Two Pointers)</div>
+                    <div class="algorithm-item">Reversing Linked Lists</div>
+                    <div class="algorithm-item">Merging and Partitioning Lists</div>
+                    <div class="algorithm-item">Dummy Node Technique</div>
+                    <div class="algorithm-item">List Manipulation Operations</div>
+                    <div class="algorithm-item">List Transformations</div>
+                    <div class="algorithm-item">Basic List Operations Implementation</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CS Subjects Section -->
+        <div class="content-section" id="cssubjects">
+            <div class="header">
+                <h2>CS Subjects</h2>
+                <p>Add resources and links for computer science subjects</p>
+            </div>
+
+            <div id="oops" class="cs-subject">
+                <h4>📌 Object-Oriented Programming (OOP)</h4>
+                <div class="link-input-group">
+                    <input type="text" class="link-input" placeholder="Enter link URL" data-subject="oops">
+                    <button onclick="addLink('oops')">Add Link</button>
+                </div>
+                <div class="links-container" id="oops-links"></div>
+            </div>
+
+            <div id="dbms" class="cs-subject">
+                <h4>📌 Database Management Systems (DBMS)</h4>
+                <div class="link-input-group">
+                    <input type="text" class="link-input" placeholder="Enter link URL" data-subject="dbms">
+                    <button onclick="addLink('dbms')">Add Link</button>
+                </div>
+                <div class="links-container" id="dbms-links"></div>
+            </div>
+
+            <div id="os" class="cs-subject">
+                <h4>📌 Operating Systems (OS)</h4>
+                <div class="link-input-group">
+                    <input type="text" class="link-input" placeholder="Enter link URL" data-subject="os">
+                    <button onclick="addLink('os')">Add Link</button>
+                </div>
+                <div class="links-container" id="os-links"></div>
+            </div>
+
+            <div id="cn" class="cs-subject">
+                <h4>📌 Computer Networks (CN)</h4>
+                <div class="link-input-group">
+                    <input type="text" class="link-input" placeholder="Enter link URL" data-subject="cn">
+                    <button onclick="addLink('cn')">Add Link</button>
+                </div>
+                <div class="links-container" id="cn-links"></div>
+            </div>
+
+            <div id="cpp" class="cs-subject">
+                <h4>📌 C++ Programming</h4>
+                <div class="link-input-group">
+                    <input type="text" class="link-input" placeholder="Enter link URL" data-subject="cpp">
+                    <button onclick="addLink('cpp')">Add Link</button>
+                </div>
+                <div class="links-container" id="cpp-links"></div>
+            </div>
+
+            <div id="testing" class="cs-subject">
+                <h4>📌 Software Testing</h4>
+                <div class="link-input-group">
+                    <input type="text" class="link-input" placeholder="Enter link URL" data-subject="testing">
+                    <button onclick="addLink('testing')">Add Link</button>
+                </div>
+                <div class="links-container" id="testing-links"></div>
+            </div>
+
+            <div id="development" class="cs-subject">
+                <h4>📌 Software Development</h4>
+                <div class="link-input-group">
+                    <input type="text" class="link-input" placeholder="Enter link URL" data-subject="development">
+                    <button onclick="addLink('development')">Add Link</button>
+                </div>
+                <div class="links-container" id="development-links"></div>
+            </div>
+
+            <div id="projects" class="cs-subject">
+                <h4>📌 Project Questions</h4>
+                <div class="link-input-group">
+                    <input type="text" class="link-input" placeholder="Enter link URL" data-subject="projects">
+                    <button onclick="addLink('projects')">Add Link</button>
+                </div>
+                <div class="links-container" id="projects-links"></div>
+            </div>
+
+            <div id="techstack" class="cs-subject">
+                <h4>📌 Tech Stack Questions</h4>
+                <div class="link-input-group">
+                    <input type="text" class="link-input" placeholder="Enter link URL" data-subject="techstack">
+                    <button onclick="addLink('techstack')">Add Link</button>
+                </div>
+                <div class="links-container" id="techstack-links"></div>
+            </div>
+
+            <div id="mockinterviews" class="cs-subject">
+                <h4>📌 Mock Interviews</h4>
+                <div class="link-input-group">
+                    <input type="text" class="link-input" placeholder="Enter link URL" data-subject="mockinterviews">
+                    <button onclick="addLink('mockinterviews')">Add Link</button>
+                </div>
+                <div class="links-container" id="mockinterviews-links"></div>
+            </div>
+
+            <div id="certifications" class="cs-subject">
+                <h4>📌 Certifications</h4>
+                <div class="link-input-group">
+                    <input type="text" class="link-input" placeholder="Enter link URL" data-subject="certifications">
+                    <button onclick="addLink('certifications')">Add Link</button>
+                </div>
+                <div class="links-container" id="certifications-links"></div>
+            </div>
+
+            <div id="projectcodes" class="cs-subject">
+                <h4>📌 Project Codes</h4>
+                <div class="link-input-group">
+                    <input type="text" class="link-input" placeholder="Enter link URL" data-subject="projectcodes">
+                    <button onclick="addLink('projectcodes')">Add Link</button>
+                </div>
+                <div class="links-container" id="projectcodes-links"></div>
+            </div>
+
+            <div id="managerial" class="cs-subject">
+                <h4>📌 Managerial Questions</h4>
+                <div class="link-input-group">
+                    <input type="text" class="link-input" placeholder="Enter link URL" data-subject="managerial">
+                    <button onclick="addLink('managerial')">Add Link</button>
+                </div>
+                <div class="links-container" id="managerial-links"></div>
+            </div>
+
+            <div id="hr" class="cs-subject">
+                <h4>📌 HR Questions</h4>
+                <div class="link-input-group">
+                    <input type="text" class="link-input" placeholder="Enter link URL" data-subject="hr">
+                    <button onclick="addLink('hr')">Add Link</button>
+                </div>
+                <div class="links-container" id="hr-links"></div>
+            </div>
+
+            <div id="resources" class="cs-subject">
+                <h4>📌 Study Resources</h4>
+                <div class="link-input-group">
+                    <input type="text" class="link-input" placeholder="Enter link URL" data-subject="resources">
+                    <button onclick="addLink('resources')">Add Link</button>
+                </div>
+                <div class="links-container" id="resources-links"></div>
+            </div>
+
+            <div id="placements" class="cs-subject">
+                <h4>📌 Placement Prep</h4>
+                <div class="link-input-group">
+                    <input type="text" class="link-input" placeholder="Enter link URL" data-subject="placements">
+                    <button onclick="addLink('placements')">Add Link</button>
+                </div>
+                <div class="links-container" id="placements-links"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let subjects = {
+            oops: [],
+            dbms: [],
+            os: [],
+            cn: [],
+            cpp: [],
+            testing: [],
+            development: [],
+            projects: [],
+            managerial: [],
+            hr: [],
+            techstack: [],
+            mockinterviews: [],
+            certifications: [],
+            projectcodes: [],
+            resources: [],
+            books: [],
+            roadmap: [],
+            internships: [],
+            placements: []
+        };
+
+        const problemsChecked = {};
+
+        // Load data from localStorage on page load
+        function loadData() {
+            const savedLinks = localStorage.getItem('studyPlatformLinks');
+            const savedProblems = localStorage.getItem('studyPlatformProblems');
+            
+            if (savedLinks) {
+                subjects = JSON.parse(savedLinks);
+                Object.keys(subjects).forEach(subject => {
+                    renderLinks(subject);
+                });
+            }
+
+            if (savedProblems) {
+                Object.assign(problemsChecked, JSON.parse(savedProblems));
+                restoreCheckboxStates();
+            }
+        }
+
+        // Save all links to localStorage
+        function saveLinks() {
+            localStorage.setItem('studyPlatformLinks', JSON.stringify(subjects));
+        }
+
+        // Save problem checkbox states to localStorage
+        function saveProblems() {
+            localStorage.setItem('studyPlatformProblems', JSON.stringify(problemsChecked));
+        }
+
+        // Restore checkbox states from saved data
+        function restoreCheckboxStates() {
+            document.querySelectorAll('.checkbox').forEach(checkbox => {
+                const problemName = checkbox.parentElement.parentElement.querySelector('.problem-name').textContent;
+                if (problemsChecked[problemName]) {
+                    checkbox.checked = true;
+                }
+            });
+        }
+
+        // Add event listeners to all checkboxes
+        function addCheckboxListeners() {
+            document.querySelectorAll('.checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const problemName = this.parentElement.parentElement.querySelector('.problem-name').textContent;
+                    problemsChecked[problemName] = this.checked;
+                    saveProblems();
+                });
+            });
+        }
+
+        function switchSection(sectionId, btn) {
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+
+            document.querySelectorAll('.nav-btn').forEach(navBtn => {
+                navBtn.classList.remove('active');
+            });
+            btn.classList.add('active');
+        }
+
+        function toggleTopic(element) {
+            element.classList.toggle('collapsed');
+            const problemsList = element.nextElementSibling;
+            problemsList.classList.toggle('hidden');
+        }
+
+        function addLink(subject) {
+            const inputField = document.querySelector(`[data-subject="${subject}"]`);
+            const url = inputField.value.trim();
+
+            if (!url) {
+                alert('Please enter a URL');
+                return;
+            }
+
+            if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                alert('Please enter a valid URL starting with http:// or https://');
+                return;
+            }
+
+            if (!subjects[subject]) {
+                subjects[subject] = [];
+            }
+
+            subjects[subject].push(url);
+            inputField.value = '';
+            renderLinks(subject);
+            saveLinks();
+        }
+
+        function renderLinks(subject) {
+            const container = document.getElementById(`${subject}-links`);
+            if (!container) return;
+            
+            container.innerHTML = '';
+
+            if (!subjects[subject] || subjects[subject].length === 0) {
+                container.innerHTML = '<p style="color: #999; font-size: 13px; padding: 10px;">No links added yet</p>';
+                return;
+            }
+
+            subjects[subject].forEach((url, index) => {
+                const linkItem = document.createElement('div');
+                linkItem.className = 'link-item';
+                const domain = new URL(url).hostname;
+                linkItem.innerHTML = `
+                    <a href="${url}" target="_blank" title="${url}">${domain}</a>
+                    <button class="delete-btn" onclick="deleteLink('${subject}', ${index})">Delete</button>
+                `;
+                container.appendChild(linkItem);
+            });
+        }
+
+        function deleteLink(subject, index) {
+            if (subjects[subject]) {
+                subjects[subject].splice(index, 1);
+                renderLinks(subject);
+                saveLinks();
+            }
+        }
+
+        // Allow Enter key to add link
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && e.target.classList.contains('link-input')) {
+                const subject = e.target.getAttribute('data-subject');
+                addLink(subject);
+            }
+        });
+
+        // Initialize all link containers and load saved data
+        loadData();
+        addCheckboxListeners();
+
+        // Re-attach checkbox listeners when switching sections
+        const observer = new MutationObserver(() => {
+            addCheckboxListeners();
+        });
+
+        observer.observe(document.body, { childList: true, subtree: true });
+    </script>
+</body>
+</html>
